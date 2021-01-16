@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 
 use App\Http\Controllers\Api\HabitacionController;
+use App\Http\Controllers\API\RegistroController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,7 +16,8 @@ use App\Http\Controllers\Api\HabitacionController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+Route::post('register', [RegistroController::class, 'registro']);
+Route::post('login', [RegistroController::class, 'login']);
 
 Route::middleware('auth:api')->group( function () {
     Route::resource('habitaciones', HabitacionController::class);
