@@ -7,15 +7,30 @@ use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Habitacion;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Habitacion as HabitacionResource;
-class HabitacionController  extends BaseController
+class HabitacionController extends BaseController
 {
-    //
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
+        //
         $habitaciones = Habitacion::all();
-
         return $this->sendResponse(HabitacionResource::collection($habitaciones), 'El listado de habitaciones se ha obtenido correctamente.');
     }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create(Request $request)
+    {
+
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -24,21 +39,26 @@ class HabitacionController  extends BaseController
      */
     public function store(Request $request)
     {
+        //
         $input = $request->all();
-
         $validator = Validator::make($input, [
             'numero' => 'required',
             'tipo' => 'required',
             'piso' => 'required'
         ]);
+        $habitacion = new Habitacion();
+        $habitacion->numero = $input['numero'];
+        $habitacion->tipo = $input['tipo'];
+        $habitacion->piso = $input['piso'];
+        $habitacion->descripcion = $input['descripcion'];
+        $habitacion->estado = 1;
+        $habitacion->save();
 
         if($validator->fails()){
             return $this->sendError('Error de validación.', $validator->errors());
         }
 
-        $habitaciones = Habitacion::create($input);
-
-        return $this->sendResponse(new HabitacionResource($habitaciones), 'Habitación creada satisfactoriamente.');
+        return $this->sendResponse(new HabitacionResource($habitacion), 'Habitación creada satisfactoriamente.');
     }
 
     /**
@@ -49,6 +69,7 @@ class HabitacionController  extends BaseController
      */
     public function show($id)
     {
+        //
         $habitaciones = Habitacion::find($id);
 
         if (is_null($habitaciones)) {
@@ -59,30 +80,43 @@ class HabitacionController  extends BaseController
     }
 
     /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Habitacion $product)
+    public function update(Request $request )
     {
+        //
         $input = $request->all();
 
         $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
+            'numero' => 'required'
         ]);
 
         if($validator->fails()){
             return $this->sendError('Error de validación.', $validator->errors());
         }
+        $habitacion = Habitacion::find($request->route('id'));
+        $habitacion->numero  = (isset($input['numero'])) ? $input['numero'] : $habitacion->numero;
+        $habitacion->tipo  = (isset($input['tipo'])) ? $input['tipo'] : $habitacion->tipo;
+        $habitacion->piso  = (isset($input['piso'])) ? $input['piso'] : $habitacion->piso;
+        $habitacion->descripcion  = (isset($input['descripcion'])) ? $input['descripcion'] : $habitacion->descripcion;
+        $habitacion->save();
 
-        $product->name = $input['name'];
-        $product->detail = $input['detail'];
-        $product->save();
-
-        return $this->sendResponse(new HabitacionResource($product), 'Product updated successfully.');
+        return $this->sendResponse(new HabitacionResource($habitacion), 'La habitación fue actualizada correctamente.');
     }
 
     /**
@@ -91,10 +125,12 @@ class HabitacionController  extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        $product->delete();
+        //
+        $habitacion =  Habitacion::find($id);
+        $habitacion->delete();
 
-        return $this->sendResponse([], 'Product deleted successfully.');
+        return $this->sendResponse([], 'La habitación fue eliminada correctamente.');
     }
 }

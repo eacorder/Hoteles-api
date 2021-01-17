@@ -3,9 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
-use App\Http\Controllers\Api\HabitacionController;
-use App\Http\Controllers\API\RegistroController;
+use App\Http\Controllers\Api\RegistroController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,6 +17,8 @@ use App\Http\Controllers\API\RegistroController;
 Route::post('register', [RegistroController::class, 'registro']);
 Route::post('login', [RegistroController::class, 'login']);
 
-Route::middleware('auth:api')->group( function () {
-    Route::resource('habitaciones', HabitacionController::class);
+Route::middleware(['auth:api'])->group( function () {
+    Route::resource('habitaciones',\Api\HabitacionController::class)->only('show','index','store','destroy');
+    Route::post('habitaciones/{id}', [\App\Http\Controllers\Api\HabitacionController::class, 'update']);
+
 });
