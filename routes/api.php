@@ -18,10 +18,10 @@ Route::post('register', [RegistroController::class, 'registro']);
 Route::post('login', [RegistroController::class, 'login']);
 
 Route::middleware(['auth:api'])->group( function () {
-    Route::resource('habitaciones',\Api\HabitacionController::class)->only('show','index','store','destroy');
-    Route::post('habitaciones/{id}', [\App\Http\Controllers\Api\HabitacionController::class, 'update']);
-    Route::resource('clientes',\Api\ClienteController::class)->only('show','index','store','destroy');
-    Route::post('clientes/{id}', [\App\Http\Controllers\Api\ClienteController::class, 'update']);
-    Route::resource('reservaciones',\Api\ClienteHabitacionController::class)->only('show','index','store','destroy');
-    Route::post('reservaciones/{id}', [\App\Http\Controllers\Api\ClienteHabitacionController::class, 'update']);
+    Route::resource('habitaciones',\Api\HabitacionController::class)->only('show','index','store','destroy')->middleware('roles:user,admin');
+    Route::post('habitaciones/{id}', [\App\Http\Controllers\Api\HabitacionController::class, 'update'])->middleware('roles:user,admin');
+    Route::resource('clientes',\Api\ClienteController::class)->only('show','index','store','destroy')->middleware('roles:user,admin');
+    Route::post('clientes/{id}', [\App\Http\Controllers\Api\ClienteController::class, 'update'])->middleware('roles:user');
+    Route::resource('reservaciones',\Api\ClienteHabitacionController::class)->only('show','index','store','destroy')->middleware('roles:admin');
+    Route::post('reservaciones/{id}', [\App\Http\Controllers\Api\ClienteHabitacionController::class, 'update'])->middleware('roles:admin');
 });
