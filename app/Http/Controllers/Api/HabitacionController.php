@@ -42,10 +42,14 @@ class HabitacionController extends BaseController
         //
         $input = $request->all();
         $validator = Validator::make($input, [
-            'numero' => 'required',
+            'numero' => 'required|numeric|unique:habitaciones',
             'tipo' => 'required',
-            'piso' => 'required'
+            'piso' => 'required|numeric'
         ]);
+        if($validator->fails()){
+            return $this->sendError('Error de validación.', $validator->errors());
+        }
+
         $habitacion = new Habitacion();
         $habitacion->numero = $input['numero'];
         $habitacion->tipo = $input['tipo'];
@@ -54,9 +58,6 @@ class HabitacionController extends BaseController
         $habitacion->estado = 1;
         $habitacion->save();
 
-        if($validator->fails()){
-            return $this->sendError('Error de validación.', $validator->errors());
-        }
 
         return $this->sendResponse(new HabitacionResource($habitacion), 'Habitación creada satisfactoriamente.');
     }
@@ -103,7 +104,8 @@ class HabitacionController extends BaseController
         $input = $request->all();
 
         $validator = Validator::make($input, [
-            'numero' => 'required'
+            'numero' => 'numeric|unique:habitaciones',
+            'piso' => 'numeric'
         ]);
 
         if($validator->fails()){

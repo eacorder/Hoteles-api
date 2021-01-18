@@ -20,5 +20,7 @@ Route::post('login', [RegistroController::class, 'login']);
 Route::middleware(['auth:api'])->group( function () {
     Route::resource('habitaciones',\Api\HabitacionController::class)->only('show','index','store','destroy');
     Route::post('habitaciones/{id}', [\App\Http\Controllers\Api\HabitacionController::class, 'update']);
+    Route::resource('clientes',\Api\ClienteController::class)->only('show','index','store','destroy');
+    Route::post('clientes/{id}', [\App\Http\Controllers\Api\ClienteController::class, 'update']);
 
 });
